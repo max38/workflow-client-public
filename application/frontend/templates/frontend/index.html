@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_content %}
+    <div id="app" class="container-fluid"></div>
+{% endblock %}
+{% block js_script %}
+    <script src="{% static 'frontend/main.js' %}"></script>
+    <script src="{% static 'frontend/runtime.js' %}"></script>
+    <script src="{% static 'frontend/vendors~main.js' %}"></script>
+{% endblock %}

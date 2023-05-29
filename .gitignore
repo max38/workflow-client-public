@@ -1,0 +1,18 @@
+node_modules
+
+*.log*
+.idea/*
+application/**/__pycache__/
+application/*.pid
+application/*.db
+*.pyc
+.DS_Store
+*.sqlite3
+.coverage
+.~lock*
+.vscode
+ansible/*.retry
+db-files
+db-files/*
+# application/frontend/src/components/bpmn-workflow-js/
+# application/frontend/src/components/bpmn-workflow-js/*

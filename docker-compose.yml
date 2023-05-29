@@ -1,0 +1,78 @@
+version: '2'
+
+services:
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    environment:
+      - RABBITMQ_PASSWORD=ictadmin
+    ports:
+      - "15673:15672"
+#      - "5672:5672"
+  db:
+    environment:
+      - "POSTGRES_PASSWORD=ictadmin"
+      - "POSTGRES_DB=bpmn"
+    image: postgres
+    volumes:
+      - ./db-files:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    links:
+      - rabbitmq
+
+  migration:
+    build: .
+    command: python3 manage.py migrate --noinput
+    depends_on:
+      - db
+
+  celery:
+    restart: always
+    build: .
+    command: ['celery', '-A', 'workflow_bpmn', 'worker', '-l', 'info']
+    volumes:
+      - ./application:/app
+    environment:
+      - DB_HOST=db
+      - CELERY_BROKER_URL=amqp://user:ictadmin@rabbitmq
+    links:
+      - db:db
+      - rabbitmq:rabbitmq
+
+  celery_beat:
+    restart: always
+    build: .
+    command: [ 'celery', '-A', 'workflow_bpmn', 'beat', '-l', 'info' ]
+    #    command: ['celery', '-A', 'workflow_bpmn', 'beat', '-l', 'info', '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler']
+    volumes:
+      - ./application:/app
+    environment:
+      - DB_HOST=db
+      - CELERY_BROKER_URL=amqp://user:ictadmin@rabbitmq
+    links:
+      - db:db
+      - rabbitmq:rabbitmq
+    depends_on:
+      - db
+      - rabbitmq
+
+  app:
+   restart: always
+   build: .
+   ports:
+     - "8083:8000"
+   volumes:
+     - ./application:/app
+   environment:
+     - DB_HOST=db
+     - CELERY_BROKER_URL=amqp://user:ictadmin@rabbitmq
+   links:
+     - db:db
+     - rabbitmq:rabbitmq
+
+networks:
+ default:
+   external:
+     name: bpmn-workflow
+
+# python3 manage.py collectstatic

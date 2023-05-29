@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block body_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 mx-auto mt-5">
+        <form method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend>{% trans "BPMN Workflow Management" %}</legend>
+                <div class="form-group">
+                    <label for="loginInputUsername">{% trans "Username" %}</label>
+                    <input name="username" type="text" class="form-control" id="loginInputUsername" placeholder="{% trans 'Enter username' %}">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">{% trans 'Password' %}</label>
+                    <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="{% trans 'Password' %}">
+                </div>
+                <button type="submit" class="btn btn-info">{% trans 'Login' %}</button>
+            </fieldset>
+        </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
